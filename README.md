@@ -24,7 +24,7 @@ An interactive **Olympic Games Analytics Dashboard** built with **Python** and *
 * Plotly
 * Matplotlib
 * Seaborn
-* Scikit-learn (Optional)
+* Scikit-learn
 
 ## 📂 Dataset
 
