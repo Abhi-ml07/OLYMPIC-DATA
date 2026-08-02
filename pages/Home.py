@@ -33,6 +33,8 @@ sel_year = st.sidebar.selectbox("Year", years, index=0)
 sel_country = st.sidebar.selectbox("Country", countries, index=0)
 sel_sport = st.sidebar.selectbox("Sport", sports, index=0)
 sel_gender = st.sidebar.selectbox("Gender", genders, index=0)
+sel_submmit = st.sidebar.button("Apply Filters")
+
 
 
 def apply_filters(df: pd.DataFrame):
