@@ -154,22 +154,33 @@ def age_analysis(year=None, season=None) -> pd.DataFrame:
     return summary.sort_values(["medal_winners", "avg_age"], ascending=[False, True]).reset_index(drop=True)
 
 
+def build_athlete_record_summary(df: pd.DataFrame) -> pd.DataFrame:
+    agg_spec = {
+        "medals": ("medal", lambda s: (s != "No Medal").sum()),
+        "golds": ("medal", lambda s: (s == "Gold").sum()),
+        "silvers": ("medal", lambda s: (s == "Silver").sum()),
+        "bronzes": ("medal", lambda s: (s == "Bronze").sum()),
+        "appearances": ("games", "nunique"),
+        "sports": ("sport", "nunique"),
+        "years": ("year", "nunique"),
+        "oldest_age": ("age", "max"),
+        "youngest_age": ("age", "min"),
+    }
+
+    if "height" in df.columns:
+        agg_spec["tallest_height"] = ("height", "max")
+        agg_spec["shortest_height"] = ("height", "min")
+
+    if "weight" in df.columns:
+        agg_spec["heaviest_weight"] = ("weight", "max")
+        agg_spec["lightest_weight"] = ("weight", "min")
+
+    summary = df.groupby(["name", "country"]).agg(**agg_spec).reset_index()
+    return summary.sort_values(["medals", "golds"], ascending=False).reset_index(drop=True)
+
+
 def records() -> pd.DataFrame:
-    df = load_olympics()
-    summary = (
-        df.groupby(["name", "country"])
-        .agg(
-            medals=("medal", lambda s: (s != "No Medal").sum()),
-            golds=("medal", lambda s: (s == "Gold").sum()),
-            silvers=("medal", lambda s: (s == "Silver").sum()),
-            bronzes=("medal", lambda s: (s == "Bronze").sum()),
-            appearances=("games", "nunique"),
-            sports=("sport", "nunique"),
-            years=("year", "nunique"),
-        )
-        .reset_index()
-    )
-    return summary.sort_values(["medals", "golds"], ascending=False).head(20).reset_index(drop=True)
+    return build_athlete_record_summary(load_olympics()).head(20)
 
 
 def timeline(year=None, season=None, country=None) -> pd.DataFrame:
@@ -197,5 +208,6 @@ __all__ = [
     "gender_analysis",
     "age_analysis",
     "records",
+    "build_athlete_record_summary",
     "timeline",
 ]
