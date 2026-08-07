@@ -13,8 +13,13 @@ olympics = olympics.drop(columns=["NOC"])
 olympics = olympics.drop_duplicates().reset_index(drop=True)
 
 olympics["Medal"] = olympics["Medal"].fillna("No Medal")
+
+
 for column in ["Age", "Height", "Weight"]:
-    olympics[column] = olympics[column].fillna(olympics[column].median())
+    if column in olympics.columns:
+        olympics[column] = olympics[column].fillna(olympics[column].mean())
+
+olympics["Age"] = olympics["Age"].astype("int16")
 
 olympics = olympics.rename(
     columns={
